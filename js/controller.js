@@ -14,7 +14,6 @@ TETRIS.controller = (function(data,view) {
     if (data.handlers.down()) {
       view.movePieceDown();
     } else {
-      console.log("hit Bottom!");
       var newPiece = data.hitBottom();
       view.addPiece(data.piece);
     }

@@ -48,37 +48,31 @@ TETRIS.data = (function() {
 
   exports.handlers = {
     left: function movePieceLeft() {
-      if (exports.piece.coreCoord.x > exports.boardEdges.left) {
-        exports.piece.coreCoord.x -= 1;
-        exports.piece.updateCells();
-        if (collision(exports.piece.cells)) {
-          exports.piece.coreCoord.x += 1;
-          exports.piece.updateCells();
-          return false;
-        } else { return true; }
-      } else { return false; }
-    },
-    right: function movePieceRight() {
-      if (exports.piece.coreCoord.x < exports.boardEdges.right) {
+      exports.piece.coreCoord.x -= 1;
+      exports.piece.updateCells();
+      if (collision(exports.piece.cells)) {
         exports.piece.coreCoord.x += 1;
         exports.piece.updateCells();
-        if (collision(exports.piece.cells)) {
-          exports.piece.coreCoord.x -= 1;
-          exports.piece.updateCells();
-          return false;
-        } else { return true; }
-      } else { return false; }
+        return false;
+      } else { return true; }
+    },
+    right: function movePieceRight() {
+      exports.piece.coreCoord.x += 1;
+      exports.piece.updateCells();
+      if (collision(exports.piece.cells)) {
+        exports.piece.coreCoord.x -= 1;
+        exports.piece.updateCells();
+        return false;
+      } else { return true; }
     },
     down: function movePieceDown() {
-      if (exports.piece.coreCoord.y < exports.boardEdges.bottom) {
-        exports.piece.coreCoord.y += 1;
+      exports.piece.coreCoord.y += 1;
+      exports.piece.updateCells();
+      if (collision(exports.piece.cells)) {
+        exports.piece.coreCoord.y -= 1;
         exports.piece.updateCells();
-        if (collision(exports.piece.cells)) {
-          exports.piece.coreCoord.y -= 1;
-          exports.piece.updateCells();
-          return false;
-        } else { return true; }
-      } else { return false; }
+        return false;
+      } else { return true; }
     },
   };
 
@@ -87,8 +81,8 @@ TETRIS.data = (function() {
     for (var i = 0; i < cells.length; i++) {
       var cellKey = cells[i].x + "_" + cells[i].y;
       if (exports.board[cellKey]) {
-        if (exports.board[cellKey].value) collide = true;
-      }
+        if (exports.board[cellKey].value) collide = true; // cell already occupied
+      } else { collide = true; } // not a valid board space
     }
     return collide;
   };
@@ -96,7 +90,7 @@ TETRIS.data = (function() {
   var newBoard = function newBoard(size) {
     var grid = {};
     for(var r = 0; r < size; r++) {
-      for(var c = 0; c < size; c++) {
+      for(var c = -5; c < size; c++) {  // create rows off the top of the screen
         grid[r + "_" + c] = new Coord(r,c);
       }
     }
@@ -104,16 +98,16 @@ TETRIS.data = (function() {
     return grid;
   };
 
-  var updateBoard = function updateBoard() {
+  var attachPieceToBoard = function attachPieceToBoard() {
     for (var i = 0; i < exports.piece.cells.length; i++) {
-      updateCell(exports.piece.cells[i]);
+      setBoardCell(exports.piece.cells[i]);
     }
   };
 
-  var updateCell = function updateCell(coord) {
-    var cell = coord.x + "_" + coord.y;
-    if (exports.board[cell], coord.value) {
-      exports.board[cell] = coord;
+  var setBoardCell = function setBoardCell(coord) {
+    var cellKey = coord.x + "_" + coord.y;
+    if (exports.board[cellKey], coord.value) {
+      exports.board[cellKey] = coord;
       return true;
     } else {
       return false;
@@ -137,27 +131,25 @@ TETRIS.data = (function() {
     return fullRows;
   };
 
-  exports.piece = null;
-
   exports.addPiece = function addPiece() {
     var keys = Object.keys(SHAPES);
     var key = keys[Math.floor(Math.random() * keys.length)];
 
-    this.piece = new Piece((new Coord(9,0)), SHAPES[key], SHAPES[key].color);
+    exports.piece = new Piece((new Coord(9,0)), SHAPES[key], SHAPES[key].color);
 
-    return this.piece;
+    return exports.piece;
   };
 
   exports.hitBottom = function hitBottom() {
     // move current into board
-    updateBoard();
+    attachPieceToBoard();
 
     // TODO: check for row complete
-    var fullRows = checkForCompletedRows();
+    // var fullRows = checkForCompletedRows();
     // shiftBoard(fullRows);
 
     // add new piece
-    this.addPiece();
+    return exports.addPiece();
   };
 
   exports.init = function init(boardSize) {
