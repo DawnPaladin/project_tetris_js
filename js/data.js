@@ -19,13 +19,13 @@ TETRIS.data = (function() {
   }
 
   var SHAPES = {
-    o: new Shape([[0,0],[1, 0],[0, -1], [1,-1]], "yellow"),
-    i: new Shape([[0,0],[0,-1],[0, -2], [0,-3]], "cyan"),
-    s: new Shape([[0,0],[1, 0],[1, -1], [2,-1]], "red"),
-    z: new Shape([[0,0],[1, 0],[-1,-1],[0,-1]], "green"),
-    l: new Shape([[0,0],[1, 0],[0, -1],[0,-2]], "orange"),
-    j: new Shape([[0,0],[1, 0],[1, -1],[1,-2]], "pink"),
-    t: new Shape([[0,0],[-1,-1],[0,-1],[1,-1]], "purple")
+    o: new Shape([[0,0],[ 1, 0],[ 0,-1],[1,-1]], "yellow"),
+    i: new Shape([[0,0],[ 0,-1],[ 0,-2],[0,-3]], "cyan"),
+    s: new Shape([[0,0],[ 1, 0],[ 1,-1],[2,-1]], "red"),
+    z: new Shape([[0,0],[ 1, 0],[-1,-1],[0,-1]], "green"),
+    l: new Shape([[0,0],[ 1, 0],[ 0,-1],[0,-2]], "orange"),
+    j: new Shape([[0,0],[ 1, 0],[ 1,-1],[1,-2]], "pink"),
+    t: new Shape([[0,0],[-1,-1],[ 0,-1],[1,-1]], "purple")
   };
 
   function Piece(startingCoord, shape, color) {
@@ -46,6 +46,31 @@ TETRIS.data = (function() {
     this.color = color;
   }
 
+  exports.handlers = {
+    left: function movePieceLeft() {
+      if (exports.piece.coreCoord.x > exports.boardEdges.left) {
+        exports.piece.coreCoord.x -= 1;
+        exports.piece.updateCells();
+        if (collision(exports.piece.cells)) {
+          exports.piece.coreCoord.x += 1;
+          exports.piece.updateCells();
+          return false;
+        } else { return true; }
+      } else { return false; }
+    },
+    right: function movePieceRight() {
+      if (exports.piece.coreCoord.x < exports.boardEdges.right) {
+        exports.piece.coreCoord.x += 1;
+        exports.piece.updateCells();
+        if (collision(exports.piece.cells)) {
+          exports.piece.coreCoord.x -= 1;
+          exports.piece.updateCells();
+          return false;
+        } else { return true; }
+      } else { return false; }
+    }
+  };
+
   // TODO: Refactor
   exports.movePieceDown = function movePieces() {
     if (exports.piece.coreCoord.y < exports.boardEdges.bottom) {
@@ -54,24 +79,6 @@ TETRIS.data = (function() {
 
       if (collision(exports.piece.cells)) {
         exports.piece.coreCoord.y -= 1;
-        exports.piece.updateCells();
-
-        return false;
-      }
-
-      return true;
-    } else {
-      return false;
-    }
-  };
-  exports.movePieceLeft = function movePieces() {
-    console.log("moving left");
-    if (exports.piece.coreCoord.x > exports.boardEdges.left) {
-      exports.piece.coreCoord.x -= 1;
-      exports.piece.updateCells();
-
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.x += 1;
         exports.piece.updateCells();
 
         return false;

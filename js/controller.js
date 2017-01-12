@@ -4,10 +4,7 @@ TETRIS.controller = (function(data,view) {
 
   // Run Initialization
   data.init(20);
-  view.init({
-    keydown: TETRIS.data.startkey,
-    keyup: TETRIS.data.stopkey,
-  });
+  view.init(data.handlers);
   view.renderBoard(data.board);
 
   data.addPiece();
@@ -29,6 +26,6 @@ TETRIS.controller = (function(data,view) {
     }
   };
 
-  setInterval( gameLoop, 150);
+  setInterval( gameLoop, 250);
 
 })(TETRIS.data, TETRIS.view);

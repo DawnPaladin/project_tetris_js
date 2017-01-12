@@ -1,3 +1,5 @@
+/* global Two */
+
 var TETRIS = TETRIS || {};
 TETRIS.view = (function() {
   "use strict";
@@ -9,16 +11,15 @@ TETRIS.view = (function() {
   two.appendTo(canvas);
   var group;
 
-  exports.init = function init(listeners) {
-    this.addListeners(listeners);
+  exports.init = function init(handlers) {
+    this.addListeners(handlers);
   };
 
-  exports.addListeners = function(listeners) {
+  exports.addListeners = function(handlers) {
     document.body.addEventListener('keydown', function(e) {
-      listeners.keydown(e.which);
-    });
-    document.body.addEventListener('keyup', function(e) {
-      listeners.keyup(e.which);
+      if (e.key === "ArrowLeft" && handlers.left() ) group.translation.x -= CELL_SIDE;
+      if (e.key === "ArrowRight" && handlers.right() ) group.translation.x += CELL_SIDE;
+      two.update();
     });
   };
 
@@ -41,10 +42,7 @@ TETRIS.view = (function() {
     group.translation.y += CELL_SIDE;
     two.update();
   };
-  exports.movePieceLeft = function() {
-    group.translation.x -= CELL_SIDE;
-    two.update();
-  };
+  // exports.movePieceLeft = ;
   exports.movePieceRight = function() {
     group.translation.x += CELL_SIDE;
     two.update();
