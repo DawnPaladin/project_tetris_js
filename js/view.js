@@ -6,7 +6,7 @@ TETRIS.view = (function() {
   var exports = {};
   var CELL_SIDE = 30;
 
-  var two = new Two({ fullscreen: true });
+  var two = new Two({ fullscreen: true, type: Two.Types.canvas });
   var canvas = document.getElementById('canvas');
   two.appendTo(canvas);
   var group;
@@ -17,16 +17,21 @@ TETRIS.view = (function() {
 
   exports.addListeners = function(handlers) {
     document.body.addEventListener('keydown', function(e) {
-      if (e.key === "ArrowLeft" && handlers.left() ) group.translation.x -= CELL_SIDE;
-      if (e.key === "ArrowRight" && handlers.right() ) group.translation.x += CELL_SIDE;
-      if (e.key === "ArrowDown" && handlers.down() ) group.translation.y += CELL_SIDE;
+      if (e.key === "ArrowLeft") { handlers.left(); }
+      if (e.key === "ArrowRight" ) { handlers.right(); }
+      if (e.key === "ArrowDown" ) { handlers.down(); }
+      if (e.key === "ArrowUp") { handlers.up(); }
       two.update();
     });
   };
 
-  exports.renderBoard = function renderBoard(board) {
+  exports.renderBoard = function renderBoard(board, piece) {
+    two.clear();
     for (var coord in board) {
       drawSquare(board[coord]);
+    }
+    for (var i = 0; i < piece.cells.length; i++) {
+      drawSquare(piece.cells[i]);
     }
     two.update();
   };

@@ -28,6 +28,10 @@ TETRIS.data = (function() {
     t: new Shape([[0,0],[-1,-1],[ 0,-1],[1,-1]], "purple")
   };
 
+  var rotate = function(xyArray) {
+    return [xyArray[1], -xyArray[0]]; // return [y, -x]
+  };
+
   function Piece(startingCoord, shape, color) {
     this.coreCoord = startingCoord;
     this.updateCells = function updateCells() {
@@ -74,6 +78,12 @@ TETRIS.data = (function() {
         return false;
       } else { return true; }
     },
+    up: function rotatePiece() {
+      for (var i = 0; i < exports.piece.transformation.length; i++) {
+        exports.piece.transformation[i] = rotate(exports.piece.transformation[i]);
+      }
+      exports.piece.updateCells();
+    },
   };
 
   var collision = function collision(cells) {
@@ -94,7 +104,7 @@ TETRIS.data = (function() {
         grid[r + "_" + c] = new Coord(r,c);
       }
     }
-    exports.boardEdges = { left: 0, right: size - 1, top: 0, bottom: size - 1 };
+    grid.edges = exports.boardEdges = { left: 0, right: size - 1, top: 0, bottom: size - 1 };
     return grid;
   };
 
