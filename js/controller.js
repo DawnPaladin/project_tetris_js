@@ -10,8 +10,7 @@ TETRIS.controller = (function(data,view) {
 
   var gameLoop = function() {
     if (!data.handlers.down()) {
-      var newPiece = data.hitBottom();
-      view.addPiece(data.piece);
+      data.hitBottom();
     }
     view.renderBoard(data.board, data.piece);
   };
