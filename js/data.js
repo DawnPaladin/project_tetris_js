@@ -68,77 +68,26 @@ TETRIS.data = (function() {
           return false;
         } else { return true; }
       } else { return false; }
-    }
-  };
-
-  // TODO: Refactor
-  exports.movePieceDown = function movePieces() {
-    if (exports.piece.coreCoord.y < exports.boardEdges.bottom) {
-      exports.piece.coreCoord.y += 1;
-      exports.piece.updateCells();
-
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.y -= 1;
+    },
+    down: function movePieceDown() {
+      if (exports.piece.coreCoord.y < exports.boardEdges.bottom) {
+        exports.piece.coreCoord.y += 1;
         exports.piece.updateCells();
-
-        return false;
-      }
-
-      return true;
-    } else {
-      return false;
-    }
-  };
-  exports.movePieceRight = function movePieces() {
-    console.log("moving right");
-    if (exports.piece.coreCoord.x < exports.boardEdges.right) {
-      exports.piece.coreCoord.x += 1;
-      exports.piece.updateCells();
-
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.x -= 1;
-        exports.piece.updateCells();
-
-        return false;
-      }
-
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  // TODO: Make input event-based
-  exports.startkey = function startkey(key){
-    TETRIS.data.keys[key] = true;
-  };
-  exports.stopkey = function stopkey(key){
-    TETRIS.data.keys[key] = false;
-  };
-  exports.movePiece = function movePiece(){
-    if (this.keys[40]) { // down arrow
-      // exports.movePieceDown();
-    }
-    if (this.keys[39]) { // right arrow
-      if (exports.movePieceRight())
-        return "right";
-    }
-    if (this.keys[37]) { // left arrow
-      if (exports.movePieceLeft())
-        return "left";
-    }
-    return false;
-    //  if(this.keys[32]){ // spacebar
-    //  }
-
+        if (collision(exports.piece.cells)) {
+          exports.piece.coreCoord.y -= 1;
+          exports.piece.updateCells();
+          return false;
+        } else { return true; }
+      } else { return false; }
+    },
   };
 
   var collision = function collision(cells) {
     var collide = false;
     for (var i = 0; i < cells.length; i++) {
       var cellKey = cells[i].x + "_" + cells[i].y;
-      if (TETRIS.data.board[cellKey]) {
-        if (TETRIS.data.board[cellKey].value) collide = true;
+      if (exports.board[cellKey]) {
+        if (exports.board[cellKey].value) collide = true;
       }
     }
     return collide;
@@ -151,7 +100,7 @@ TETRIS.data = (function() {
         grid[r + "_" + c] = new Coord(r,c);
       }
     }
-    TETRIS.data.boardEdges = { left: 0, right: size - 1, top: 0, bottom: size - 1 };
+    exports.boardEdges = { left: 0, right: size - 1, top: 0, bottom: size - 1 };
     return grid;
   };
 
@@ -177,7 +126,7 @@ TETRIS.data = (function() {
     for (var r = 0; r < exports.boardEdges.bottom + 1; r++) {
       fullRow = true;
       for (var c = 0; c < exports.boardEdges.right + 1; c++) {
-          if (!exports.board[r + "_" + c]) fullRow = false;
+        if (!exports.board[r + "_" + c]) fullRow = false;
       }
       if (fullRow) {
         console.log("full row!!!");

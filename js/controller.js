@@ -11,13 +11,7 @@ TETRIS.controller = (function(data,view) {
   view.addPiece(data.piece);
 
   var gameLoop = function() {
-    var direction = data.movePiece();
-    if (direction === "right")
-      view.movePieceRight();
-    if (direction === "left")
-      view.movePieceLeft();
-    if (data.movePieceDown()) {
-      console.log("moving down");
+    if (data.handlers.down()) {
       view.movePieceDown();
     } else {
       console.log("hit Bottom!");

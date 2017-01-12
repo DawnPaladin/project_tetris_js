@@ -19,6 +19,7 @@ TETRIS.view = (function() {
     document.body.addEventListener('keydown', function(e) {
       if (e.key === "ArrowLeft" && handlers.left() ) group.translation.x -= CELL_SIDE;
       if (e.key === "ArrowRight" && handlers.right() ) group.translation.x += CELL_SIDE;
+      if (e.key === "ArrowDown" && handlers.down() ) group.translation.y += CELL_SIDE;
       two.update();
     });
   };
