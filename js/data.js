@@ -127,10 +127,10 @@ TETRIS.data = (function() {
   var checkForCompletedRows = function checkForCompletedRows() {
     var fullRow, fullRows = [];
 
-    for (var r = 0; r < exports.boardEdges.bottom + 1; r++) {
+    for (var r = 0; r <= exports.boardEdges.bottom; r++) {
       fullRow = true;
-      for (var c = 0; c < exports.boardEdges.right + 1; c++) {
-        if (!exports.board[r + "_" + c]) fullRow = false;
+      for (var c = 0; c <= exports.boardEdges.right; c++) {
+        if (!exports.board[c + "_" + r].value) fullRow = false;
       }
       if (fullRow) {
         console.log("full row!!!");
@@ -139,6 +139,14 @@ TETRIS.data = (function() {
     }
 
     return fullRows;
+  };
+
+  var shiftBoard = function shiftBoard(rowIndex) {
+    for (var y = rowIndex; y >= 0; y--) {
+      for (var x = 0; x <= exports.boardEdges.right; x++) {
+        exports.board[x + "_" + y].value = exports.board[x + "_" + (y-1)].value;
+      }
+    }
   };
 
   exports.addPiece = function addPiece() {
@@ -155,11 +163,21 @@ TETRIS.data = (function() {
     attachPieceToBoard();
 
     // TODO: check for row complete
-    // var fullRows = checkForCompletedRows();
-    // shiftBoard(fullRows);
+    var fullRows = checkForCompletedRows();
+    for (var i = 0; i < fullRows.length; i++) {
+      shiftBoard(fullRows[i]);
+    }
 
     // add new piece
     return exports.addPiece();
+  };
+
+  exports.prepRow = function() {
+    var cellKey;
+    for (var i = 0; i < exports.boardEdges.right; i++) {
+      cellKey = String(i) + "_19";
+      exports.board[cellKey].value = "pink";
+    }
   };
 
   exports.init = function init(boardSize) {

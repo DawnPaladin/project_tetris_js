@@ -15,6 +15,6 @@ TETRIS.controller = (function(data,view) {
     view.renderBoard(data.board, data.piece);
   };
 
-  setInterval( gameLoop, 250);
+  setInterval( gameLoop, 400);
 
 })(TETRIS.data, TETRIS.view);
