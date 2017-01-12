@@ -4,19 +4,19 @@ TETRIS.data = (function() {
   var exports = {};
   exports.keys = {};
 
-  var Coord = function Coord(x,y,value) {
+  function Coord(x,y,value) {
     this.x = x;
     this.y = y;
     this.value = value || null;
-  };
+  }
 
-  var Shape = function Shape(array, color) {
+  function Shape(array, color) {
     color = color || "grey";
 
     this.color = color;
     this.core = new Coord(0,0,this.color);
     this.cells = array;
-  };
+  }
 
   var SHAPES = {
     o: new Shape([[0,0],[1, 0],[0, -1], [1,-1]], "yellow"),
@@ -28,7 +28,7 @@ TETRIS.data = (function() {
     t: new Shape([[0,0],[-1,-1],[0,-1],[1,-1]], "purple")
   };
 
-  var Piece = function Piece(startingCoord, shape, color) {
+  function Piece(startingCoord, shape, color) {
     this.coreCoord = startingCoord;
     this.updateCells = function updateCells() {
       var array = [];
@@ -44,8 +44,9 @@ TETRIS.data = (function() {
     this.updateCells();
     this.transformation = shape.cells;
     this.color = color;
-  };
+  }
 
+  // TODO: Refactor
   exports.movePieceDown = function movePieces() {
     if (exports.piece.coreCoord.y < exports.boardEdges.bottom) {
       exports.piece.coreCoord.y += 1;
@@ -100,6 +101,7 @@ TETRIS.data = (function() {
     }
   };
 
+  // TODO: Make input event-based
   exports.startkey = function startkey(key){
     TETRIS.data.keys[key] = true;
   };
@@ -128,12 +130,10 @@ TETRIS.data = (function() {
     var collide = false;
     for (var i = 0; i < cells.length; i++) {
       var cellKey = cells[i].x + "_" + cells[i].y;
-
       if (TETRIS.data.board[cellKey]) {
         if (TETRIS.data.board[cellKey].value) collide = true;
       }
     }
-
     return collide;
   };
 
@@ -144,22 +144,20 @@ TETRIS.data = (function() {
         grid[r + "_" + c] = new Coord(r,c);
       }
     }
-
     TETRIS.data.boardEdges = { left: 0, right: size - 1, top: 0, bottom: size - 1 };
-
     return grid;
   };
 
   var updateBoard = function updateBoard() {
-    for (var i = 0; i < TETRIS.data.piece.cells.length; i++) {
-      updateCell(TETRIS.data.piece.cells[i]);
+    for (var i = 0; i < exports.piece.cells.length; i++) {
+      updateCell(exports.piece.cells[i]);
     }
   };
 
   var updateCell = function updateCell(coord) {
     var cell = coord.x + "_" + coord.y;
-    if (TETRIS.data.board[cell], coord.value) {
-      TETRIS.data.board[cell] = coord;
+    if (exports.board[cell], coord.value) {
+      exports.board[cell] = coord;
       return true;
     } else {
       return false;
@@ -169,10 +167,10 @@ TETRIS.data = (function() {
   var checkForCompletedRows = function checkForCompletedRows() {
     var fullRow, fullRows = [];
 
-    for (var r = 0; r < TETRIS.data.boardEdges.bottom + 1; r++) {
+    for (var r = 0; r < exports.boardEdges.bottom + 1; r++) {
       fullRow = true;
-      for (var c = 0; c < TETRIS.data.boardEdges.right + 1; c++) {
-          if (!TETRIS.data.board[r + "_" + c]) fullRow = false;
+      for (var c = 0; c < exports.boardEdges.right + 1; c++) {
+          if (!exports.board[r + "_" + c]) fullRow = false;
       }
       if (fullRow) {
         console.log("full row!!!");
@@ -212,11 +210,3 @@ TETRIS.data = (function() {
 
   return exports;
 })();
-
-
-// Piece = array of Coords, values set to color
-
-// Shapes - game constant stored w/ core x, y
-// and array of offsets for each other cell
-// Can create a piece off core xy and shape offsets
-// core xy will change to move piece

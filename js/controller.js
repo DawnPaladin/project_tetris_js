@@ -31,7 +31,4 @@ TETRIS.controller = (function(data,view) {
 
   setInterval( gameLoop, 150);
 
-
-
-
 })(TETRIS.data, TETRIS.view);
