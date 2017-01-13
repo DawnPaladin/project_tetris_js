@@ -2,6 +2,7 @@ var TETRIS = TETRIS || {};
 TETRIS.data = (function() {
   "use strict";
   var exports = {};
+  var piece;
   exports.score = 0;
 
   function Coord(x,y,value) {
@@ -34,61 +35,65 @@ TETRIS.data = (function() {
 
   function Piece(startingCoord, shape, color) {
     this.coreCoord = startingCoord;
+    this.transformation = shape.cells;
     this.updateCells = function updateCells() {
       var array = [];
-      for (var i = 0; i < shape.cells.length; i++) {
+      for (var i = 0; i < this.transformation.length; i++) {
         array.push(new Coord(
-          this.coreCoord.x + shape.cells[i][0],
-          this.coreCoord.y + shape.cells[i][1],
+          this.coreCoord.x + this.transformation[i][0],
+          this.coreCoord.y + this.transformation[i][1],
           color
         ));
       }
       this.cells = array;
     };
     this.updateCells();
-    this.transformation = shape.cells;
     this.color = color;
   }
 
   exports.handlers = {
     left: function movePieceLeft() {
-      exports.piece.coreCoord.x -= 1;
-      exports.piece.updateCells();
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.x += 1;
-        exports.piece.updateCells();
+      piece.coreCoord.x -= 1;
+      piece.updateCells();
+      if (collision(piece.cells)) {
+        piece.coreCoord.x += 1;
+        piece.updateCells();
         return false;
       } else { return true; }
     },
     right: function movePieceRight() {
-      exports.piece.coreCoord.x += 1;
-      exports.piece.updateCells();
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.x -= 1;
-        exports.piece.updateCells();
+      piece.coreCoord.x += 1;
+      piece.updateCells();
+      if (collision(piece.cells)) {
+        piece.coreCoord.x -= 1;
+        piece.updateCells();
         return false;
       } else { return true; }
     },
     down: function movePieceDown() {
-      exports.piece.coreCoord.y += 1;
-      exports.piece.updateCells();
-      if (collision(exports.piece.cells)) {
-        exports.piece.coreCoord.y -= 1;
-        exports.piece.updateCells();
+      piece.coreCoord.y += 1;
+      piece.updateCells();
+      if (collision(piece.cells)) {
+        piece.coreCoord.y -= 1;
+        piece.updateCells();
         return false;
       } else { return true; }
     },
     up: function rotatePiece() {
+      var oldCells = piece.transformation;
       var newCells = [];
-      for (var i = 0; i < exports.piece.transformation.length; i++) {
-        newCells.push(rotate(exports.piece.transformation[i]));
+      for (var i = 0; i < piece.transformation.length; i++) {
+        newCells.push(rotate(piece.transformation[i]));
       }
-      console.log(newCells);
-      if (!collision(newCells)) {
-        console.log("no collision")
-        exports.piece.transformation[i] = newCells;
-      } else { console.log("collision")}
-      exports.piece.updateCells();
+      piece.transformation = newCells;
+      piece.updateCells();
+      if (collision(piece.cells)) {
+        piece.transformation = oldCells;
+        piece.updateCells();
+        return false;
+      } else {
+        return true;
+      }
     },
   };
 
@@ -114,8 +119,8 @@ TETRIS.data = (function() {
   };
 
   var attachPieceToBoard = function attachPieceToBoard() {
-    for (var i = 0; i < exports.piece.cells.length; i++) {
-      setBoardCell(exports.piece.cells[i]);
+    for (var i = 0; i < piece.cells.length; i++) {
+      setBoardCell(piece.cells[i]);
     }
   };
 
@@ -159,16 +164,16 @@ TETRIS.data = (function() {
     var keys = Object.keys(SHAPES);
     var key = keys[Math.floor(Math.random() * keys.length)];
 
-    exports.piece = new Piece((new Coord(9,0)), SHAPES[key], SHAPES[key].color);
+    piece = new Piece((new Coord(9,0)), SHAPES[key], SHAPES[key].color);
+    exports.piece = piece;
 
-    return exports.piece;
+    return piece;
   };
 
   exports.hitBottom = function hitBottom() {
     // move current into board
     attachPieceToBoard();
 
-    // TODO: check for row complete
     var fullRows = checkForCompletedRows();
     for (var i = 0; i < fullRows.length; i++) {
       shiftBoard(fullRows[i]);
