@@ -2,7 +2,7 @@ var TETRIS = TETRIS || {};
 TETRIS.data = (function() {
   "use strict";
   var exports = {};
-  exports.keys = {};
+  exports.score = 0;
 
   function Coord(x,y,value) {
     this.x = x;
@@ -147,6 +147,7 @@ TETRIS.data = (function() {
         exports.board[x + "_" + y].value = exports.board[x + "_" + (y-1)].value;
       }
     }
+    exports.score += 100;
   };
 
   exports.addPiece = function addPiece() {

@@ -13,6 +13,7 @@ TETRIS.controller = (function(data,view) {
       data.hitBottom();
     }
     view.renderBoard(data.board, data.piece);
+    view.updateScore(data.score);
   };
 
   setInterval( gameLoop, 400);

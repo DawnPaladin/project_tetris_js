@@ -6,7 +6,7 @@ TETRIS.view = (function() {
   var exports = {};
   var CELL_SIDE = 30;
 
-  var two = new Two({ fullscreen: true, /*type: Two.Types.canvas*/ });
+  var two = new Two({ width: 600, height: 600, /*type: Two.Types.canvas*/ });
   var canvas = document.getElementById('canvas');
   two.appendTo(canvas);
   var group;
@@ -34,6 +34,10 @@ TETRIS.view = (function() {
       drawSquare(piece.cells[i]);
     }
     two.update();
+  };
+
+  exports.updateScore = function(score) {
+    document.getElementById('score').innerHTML = score;
   };
 
   var drawSquare = function(coord) {
