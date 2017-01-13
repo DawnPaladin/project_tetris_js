@@ -79,22 +79,27 @@ TETRIS.data = (function() {
       } else { return true; }
     },
     up: function rotatePiece() {
+      var newCells = [];
       for (var i = 0; i < exports.piece.transformation.length; i++) {
-        exports.piece.transformation[i] = rotate(exports.piece.transformation[i]);
+        newCells.push(rotate(exports.piece.transformation[i]));
       }
+      console.log(newCells);
+      if (!collision(newCells)) {
+        console.log("no collision")
+        exports.piece.transformation[i] = newCells;
+      } else { console.log("collision")}
       exports.piece.updateCells();
     },
   };
 
   var collision = function collision(cells) {
-    var collide = false;
     for (var i = 0; i < cells.length; i++) {
       var cellKey = cells[i].x + "_" + cells[i].y;
       if (exports.board[cellKey]) {
-        if (exports.board[cellKey].value) collide = true; // cell already occupied
-      } else { collide = true; } // not a valid board space
+        if (exports.board[cellKey].value) return true; // cell already occupied
+      } else { return true; } // not a valid board space
     }
-    return collide;
+    return false;
   };
 
   var newBoard = function newBoard(size) {
